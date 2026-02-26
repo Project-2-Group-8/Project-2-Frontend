@@ -572,3 +572,5 @@ obj/
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode,react,reactnative,java,androidstudio,intellij
+
+/.idea/
