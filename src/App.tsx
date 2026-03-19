@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import HikeList from './components/HikeList'
 import HikeForm from './components/HikeForm'
+import EditHikePage from './pages/EditHikePage'
 
-function App() {
+function Dashboard() {
   const [hikes, setHikes] = useState([])
 
   // Function to fetch all hikes
@@ -20,7 +22,7 @@ function App() {
   }, [])
 
   // This function is passed to the Form; it runs after a successful POST
-  const handleHikeAdded = (newHike) => {
+  const handleHikeAdded = () => {
     fetchHikes(); 
 
   }
@@ -42,6 +44,16 @@ function App() {
         </section>
       </main>
     </div>
+  )
+}
+
+// Main App component with routing
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/edit/:id" element={<EditHikePage />} />
+    </Routes>
   )
 }
 
