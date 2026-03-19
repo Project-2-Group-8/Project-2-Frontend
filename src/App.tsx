@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import { supabase } from './supabase'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
@@ -208,6 +209,16 @@ function App() {
         </Routes>
       </div>
     </Router>
+  )
+}
+
+// Main App component with routing
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/edit/:id" element={<EditHikePage />} />
+    </Routes>
   )
 }
 
