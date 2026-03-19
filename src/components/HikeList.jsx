@@ -27,8 +27,8 @@ function App() {
             {hikes.map(hike => (
               <li key={hike.hikeId} style={{ marginBottom: '1rem', borderBottom: '1px solid #ccc' }}>
                 <strong>{hike.hikeName}</strong> <br />
-                {hike.lengthMi} miles | {hike.activityType} <br />
-                <small>Hiker: {hike.userEmail}</small>
+                {hike.lengthMi} miles | {hike.location} <br />
+                <small>Difficulty: {hike.difficulty}</small>
               </li>
             ))}
           </ul>
