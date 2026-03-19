@@ -174,7 +174,7 @@ function Dashboard() {
 
   // Function to fetch all hikes
   const fetchHikes = () => {
-    fetch('http://localhost:8080/api/hikes')
+    fetch('http://localhost:8080/api/hikes/all')
       .then(res => res.json())
       .then(data => setHikes(data))
       .catch(err => console.error("Error fetching hikes:", err));

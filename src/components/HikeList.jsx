@@ -5,7 +5,7 @@ function App() {
 
   useEffect(() => {
     // Fetch from Java Backend (Port 8080)
-    fetch('http://localhost:8080/api/hikes')
+    fetch('http://localhost:8080/api/hikes/all')
       .then(res => {
         if (!res.ok) throw new Error('Network response was not ok');
         return res.json();
@@ -25,9 +25,9 @@ function App() {
         {hikes.length > 0 ? (
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {hikes.map(hike => (
-              <li key={hike.id} style={{ marginBottom: '1rem', borderBottom: '1px solid #ccc' }}>
-                <strong>{hike.trailName}</strong> <br />
-                {hike.distanceMiles} miles | {hike.activityType} <br />
+              <li key={hike.hikeId} style={{ marginBottom: '1rem', borderBottom: '1px solid #ccc' }}>
+                <strong>{hike.hikeName}</strong> <br />
+                {hike.lengthMi} miles | {hike.activityType} <br />
                 <small>Hiker: {hike.userEmail}</small>
               </li>
             ))}
