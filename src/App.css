@@ -32,6 +32,22 @@
   padding: 0.85rem 1rem;
   border-radius: 10px;
   margin-bottom: 1rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr; 
+  gap: 40px;
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .status.success {
