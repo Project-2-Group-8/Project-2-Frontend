@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import './App.css'
 import { supabase } from './supabase'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import HikeList from './components/HikeList'
+import HikeForm from './components/HikeForm'
+import ProfilePage from './pages/ProfilePage'
+import AdminPage from './pages/AdminPage'
 
+// Types
 type BackendUser = {
   authenticated: boolean
   sub?: string
@@ -10,7 +16,17 @@ type BackendUser = {
   role?: string
 }
 
+type Hike = {
+  id?: number
+  trailName: string
+  distanceMiles: number
+  durationMinutes: number
+  userEmail: string
+  activityType: 'Walking' | 'Running'
+}
+
 function App() {
+  // --- Supabase Auth State ---
   const [loading, setLoading] = useState(true)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [email, setEmail] = useState('')
@@ -18,6 +34,10 @@ function App() {
   const [backendUser, setBackendUser] = useState<BackendUser | null>(null)
   const [message, setMessage] = useState('')
 
+  // --- Hikes State ---
+  const [hikes, setHikes] = useState<Hike[]>([])
+
+  // --- Supabase auth effect ---
   useEffect(() => {
     checkAuth()
 
@@ -41,6 +61,7 @@ function App() {
     return () => subscription.unsubscribe()
   }, [])
 
+  // --- Auth Functions ---
   async function checkAuth() {
     setLoading(true)
     setMessage('')
@@ -127,87 +148,67 @@ function App() {
     setMessage('Logged out successfully.')
   }
 
-  return (
-    <div className="app-shell">
-      <div className="login-card">
-        <h1>Monterey Bay Hiking App</h1>
-        <p className="subtitle">Google login through Supabase</p>
-
-        {loading ? (
-          <p>Loading session...</p>
-        ) : isLoggedIn ? (
-          <>
-            <div className="status success">You are logged in through Supabase.</div>
-
-            <div className="info-box">
-              <p><strong>Email:</strong> {email || 'N/A'}</p>
-              <p><strong>Token preview:</strong> {tokenPreview || 'N/A'}</p>
-            </div>
-
-            <div className="info-box">
-              <p><strong>Backend authenticated:</strong> {backendUser?.authenticated ? 'Yes' : 'No'}</p>
-              <p><strong>Backend email:</strong> {backendUser?.email ?? 'N/A'}</p>
-              <p><strong>Backend user ID:</strong> {backendUser?.sub ?? 'N/A'}</p>
-              <p><strong>Backend role:</strong> {backendUser?.role ?? 'N/A'}</p>
-            </div>
-
-            <div className="button-row">
-              <button onClick={checkAuth}>Refresh Session</button>
-              <button onClick={handleLogout}>Log Out</button>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="status">You are not logged in.</div>
-            <button onClick={handleLogin}>Sign in with Google</button>
-          </>
-        )}
-
-        {message && <p className="message">{message}</p>}
-      </div>
-import HikeList from './components/HikeList'
-import HikeForm from './components/HikeForm'
-import EditHikePage from './pages/EditHikePage'
-
-function Dashboard() {
-  const [hikes, setHikes] = useState([])
-
-  // Function to fetch all hikes
+  // --- Hike Functions ---
   const fetchHikes = () => {
-    fetch('http://localhost:8080/api/hikes')
-      .then(res => res.json())
-      .then(data => setHikes(data))
-      .catch(err => console.error("Error fetching hikes:", err));
+    fetch('http://localhost:8080/api/hikes/all')
+      .then((res) => res.json())
+      .then((data) => setHikes(data))
+      .catch((err) => console.error('Error fetching hikes:', err))
   }
 
-  // Fetch data on initial load
   useEffect(() => {
-    fetchHikes();
+    fetchHikes()
   }, [])
 
-  // This function is passed to the Form; it runs after a successful POST
-  const handleHikeAdded = () => {
-    fetchHikes(); 
-
+  const handleHikeAdded = (newHike: Hike) => {
+    fetchHikes() // Refresh list after adding
   }
 
   return (
-    <div className="dashboard-container">
-      <header className="dashboard-header">
-        <h1>Hike Tracker Dashboard</h1>
-        <p>Welcome back, <strong>Hiker</strong>!</p>
-      </header>
+    <Router>
+      <div className="app-shell">
+        {/* Top navigation */}
+        <nav className="top-nav">
+          <Link to="/">Home</Link>
+          {backendUser && <Link to="/profile">Profile</Link>}
+          {backendUser?.role === 'admin' && <Link to="/admin">Admin</Link>}
+          {isLoggedIn && <button onClick={handleLogout}>Logout</button>}
+          {!isLoggedIn && <button onClick={handleLogin}>Login</button>}
+        </nav>
 
-      <main className="dashboard-content">
-        <section className="form-section">
-          <HikeForm onHikeAdded={handleHikeAdded} />
-        </section>
+        {message && <p className="message">{message}</p>}
 
-        <section className="list-section">
-          <HikeList hikes={hikes} />
-        </section>
-      </main>
-    </div>
+        <Routes>
+          {/* Main activity dashboard: always rendered */}
+          <Route
+            path="/"
+            element={
+              <div className="dashboard-container">
+                <header className="dashboard-header">
+                  <h2>Hike Tracker Dashboard</h2>
+                  <p>
+                    Welcome{email ? ` back, ${email}` : ''}!
+                  </p>
+                </header>
+
+                <main className="dashboard-content">
+                  <section className="form-section">
+                    <HikeForm onHikeAdded={handleHikeAdded} />
+                  </section>
+
+                  <section className="list-section">
+                    <HikeList hikes={hikes} />
+                  </section>
+                </main>
+              </div>
+            }
+          />
+
+          <Route path="/profile" element={<ProfilePage backendUser={backendUser} />} />
+          <Route path="/admin" element={<AdminPage backendUser={backendUser} />} />
+        </Routes>
+      </div>
+    </Router>
   )
 }
 
