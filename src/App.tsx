@@ -16,11 +16,12 @@ type BackendUser = {
 }
 
 type Hike = {
-  id: number
-  name: string
-  location: string
-  distance: number
-  date: string
+  id?: number
+  trailName: string
+  distanceMiles: number
+  durationMinutes: number
+  userEmail: string
+  activityType: 'Walking' | 'Running'
 }
 
 function App() {
@@ -165,77 +166,39 @@ function App() {
   return (
     <Router>
       <div className="app-shell">
+        {/* Top navigation */}
         <nav className="top-nav">
           <Link to="/">Home</Link>
           {backendUser && <Link to="/profile">Profile</Link>}
           {backendUser?.role === 'admin' && <Link to="/admin">Admin</Link>}
           {isLoggedIn && <button onClick={handleLogout}>Logout</button>}
+          {!isLoggedIn && <button onClick={handleLogin}>Login</button>}
         </nav>
 
         {message && <p className="message">{message}</p>}
 
         <Routes>
+          {/* Main activity dashboard: always rendered */}
           <Route
             path="/"
             element={
-              <div className="login-card">
-                <h1>Monterey Bay Hiking App</h1>
-                <p className="subtitle">Google login through Supabase</p>
+              <div className="dashboard-container">
+                <header className="dashboard-header">
+                  <h2>Hike Tracker Dashboard</h2>
+                  <p>
+                    Welcome{email ? ` back, ${email}` : ''}!
+                  </p>
+                </header>
 
-                {loading ? (
-                  <p>Loading session...</p>
-                ) : isLoggedIn ? (
-                  <>
-                    <div className="info-box">
-                      <p>
-                        <strong>Email:</strong> {email || 'N/A'}
-                      </p>
-                      <p>
-                        <strong>Token preview:</strong> {tokenPreview || 'N/A'}
-                      </p>
-                    </div>
+                <main className="dashboard-content">
+                  <section className="form-section">
+                    <HikeForm onHikeAdded={handleHikeAdded} />
+                  </section>
 
-                    <div className="info-box">
-                      <p>
-                        <strong>Backend authenticated:</strong>{' '}
-                        {backendUser?.authenticated ? 'Yes' : 'No'}
-                      </p>
-                      <p>
-                        <strong>Backend email:</strong> {backendUser?.email ?? 'N/A'}
-                      </p>
-                      <p>
-                        <strong>Backend user ID:</strong> {backendUser?.sub ?? 'N/A'}
-                      </p>
-                      <p>
-                        <strong>Backend role:</strong> {backendUser?.role ?? 'N/A'}
-                      </p>
-                    </div>
-
-                    <div className="dashboard-container">
-                      <header className="dashboard-header">
-                        <h2>Hike Tracker Dashboard</h2>
-                        <p>
-                          Welcome back, <strong>{email}</strong>!
-                        </p>
-                      </header>
-
-                      <main className="dashboard-content">
-                        <section className="form-section">
-                          <HikeForm onHikeAdded={handleHikeAdded} />
-                        </section>
-
-                        <section className="list-section">
-                          <HikeList hikes={hikes} />
-                        </section>
-                      </main>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <p>You are not logged in.</p>
-                    <button onClick={handleLogin}>Sign in with Google</button>
-                  </>
-                )}
+                  <section className="list-section">
+                    <HikeList hikes={hikes} />
+                  </section>
+                </main>
               </div>
             }
           />

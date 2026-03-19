@@ -1,5 +1,5 @@
 import React from 'react'
-import { Hike } from './HikeForm'
+import type { Hike } from './HikeForm'
 
 interface HikeListProps {
   hikes: Hike[]
