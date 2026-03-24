@@ -23,6 +23,30 @@ function Dashboard() {
   const [backendUser, setBackendUser] = useState<BackendUser | null>(null)
   const [hikes, setHikes] = useState<Hike[]>([])
 
+async function handleLogout() {
+    await supabase.auth.signOut()
+    setEmail('')
+    setBackendUser(null)
+  }
+
+  function fetchHikes() {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hikes/all`)
+      .then(res => res.json())
+      .then(data => setHikes(data))
+      .catch(err => console.error('Error fetching hikes:', err))
+  }
+  async function checkBackend(token: string) {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (res.ok) setBackendUser(await res.json())
+    } catch (err) {
+      console.error('Backend check failed:', err)
+    }
+  }
+
+  
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (data.session) {
@@ -45,29 +69,8 @@ function Dashboard() {
     return () => subscription.unsubscribe()
   }, [])
 
-  async function checkBackend(token: string) {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (res.ok) setBackendUser(await res.json())
-    } catch (err) {
-      console.error('Backend check failed:', err)
-    }
-  }
-
-  async function handleLogout() {
-    await supabase.auth.signOut()
-    setEmail('')
-    setBackendUser(null)
-  }
-
-  function fetchHikes() {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/hikes/all`)
-      .then(res => res.json())
-      .then(data => setHikes(data))
-      .catch(err => console.error('Error fetching hikes:', err))
-  }
+  
+  
 
   return (
     <div className="app-shell">
