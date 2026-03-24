@@ -1,4 +1,3 @@
-// src/pages/EditHikePage.tsx
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -6,20 +5,22 @@ function EditHikePage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const [trailName, setTrailName] = useState('')
-  const [distance, setDistance] = useState('')
-  const [duration, setDuration] = useState('')
-  const [activityType, setActivityType] = useState('Walking')
+  const [hikeName, setHikeName] = useState('')
+  const [location, setLocation] = useState('')
+  const [lengthMi, setLengthMi] = useState('')
+  const [difficulty, setDifficulty] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     fetch(`http://localhost:8080/api/hikes/${id}`)
       .then(res => res.json())
       .then(data => {
-        setTrailName(data.trailName || '')
-        setDistance(data.distanceMiles?.toString() || '')
-        setDuration(data.durationMinutes?.toString() || '')
-        setActivityType(data.activityType || 'Walking')
+        setHikeName(data.hikeName || '')
+        setLocation(data.location || '')
+        setLengthMi(data.lengthMi?.toString() || '')
+        setDifficulty(data.difficulty?.toString() || '')
+        setImageUrl(data.imageUrl || '')
         setLoading(false)
       })
       .catch(err => {
@@ -32,11 +33,11 @@ function EditHikePage() {
     e.preventDefault()
 
     const updatedHike = {
-      trailName,
-      distanceMiles: parseFloat(distance),
-      durationMinutes: parseInt(duration),
-      userEmail: 'guest@tester.com',
-      activityType
+      hikeName,
+      location,
+      lengthMi: parseFloat(lengthMi),
+      difficulty: parseFloat(difficulty),
+      imageUrl
     }
 
     fetch(`http://localhost:8080/api/hikes/${id}`, {
@@ -55,7 +56,7 @@ function EditHikePage() {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2>Edit Activity</h2>
+      <h2>Edit Hike</h2>
 
       <form
         onSubmit={handleSubmit}
@@ -68,39 +69,41 @@ function EditHikePage() {
       >
         <input
           type="text"
-          placeholder="Trail Name"
-          value={trailName}
-          onChange={e => setTrailName(e.target.value)}
+          placeholder="Hike Name"
+          value={hikeName}
+          onChange={e => setHikeName(e.target.value)}
           required
+        />
+
+        <input
+          type="text"
+          placeholder="Location"
+          value={location}
+          onChange={e => setLocation(e.target.value)}
         />
 
         <input
           type="number"
           step="0.1"
-          placeholder="Miles"
-          value={distance}
-          onChange={e => setDistance(e.target.value)}
-          required
+          placeholder="Length (miles)"
+          value={lengthMi}
+          onChange={e => setLengthMi(e.target.value)}
         />
 
         <input
           type="number"
-          placeholder="Minutes"
-          value={duration}
-          onChange={e => setDuration(e.target.value)}
-          required
+          step="0.1"
+          placeholder="Difficulty"
+          value={difficulty}
+          onChange={e => setDifficulty(e.target.value)}
         />
 
-        <div style={{ margin: '10px 0' }}>
-          <label>Activity: </label>
-          <select
-            value={activityType}
-            onChange={e => setActivityType(e.target.value)}
-          >
-            <option value="Walking">Walking</option>
-            <option value="Running">Running</option>
-          </select>
-        </div>
+        <input
+          type="text"
+          placeholder="Image URL"
+          value={imageUrl}
+          onChange={e => setImageUrl(e.target.value)}
+        />
 
         <button
           type="submit"
@@ -111,7 +114,7 @@ function EditHikePage() {
             marginRight: '10px'
           }}
         >
-          Update Activity
+          Update Hike
         </button>
 
         <button
