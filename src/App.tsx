@@ -7,6 +7,7 @@ import HikeForm from './components/HikeForm'
 import ProfilePage from './pages/ProfilePage'
 import AdminPage from './pages/AdminPage'
 import EditHikePage from './pages/EditHikePage'
+import AddLogPage from './pages/AddLogPage'
 import LoginPage from './pages/LoginPage'
 import AuthCallback from './pages/AuthCallback'
 import type { Hike } from './components/HikeForm'
@@ -111,6 +112,7 @@ export default function App() {
       <Route path="/profile" element={<ProfilePage backendUser={null} />} />
       <Route path="/admin" element={<AdminPage backendUser={null} />} />
       <Route path="/edit/:id" element={<EditHikePage />} />
+      <Route path="/log/:id" element={<AddLogPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
