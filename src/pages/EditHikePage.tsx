@@ -39,6 +39,7 @@ function EditHikePage() {
       difficulty: parseFloat(difficulty),
       imageUrl
     }
+    console.log('Submitting updated hike:', updatedHike)
 
     fetch(`http://localhost:8080/api/hikes/${id}`, {
       method: 'PUT',

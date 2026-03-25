@@ -34,6 +34,7 @@ const HikeForm: React.FC<HikeFormProps> = ({ onHikeAdded }) => {
       imageUrl
     }
 
+    console.log(newHike)
     fetch('http://localhost:8080/api/hikes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

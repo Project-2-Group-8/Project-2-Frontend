@@ -33,7 +33,7 @@ function HikeList() {
   }
 
   const handleAddLog = (hikeId: number) => {
-    console.log('Add log for hike:', hikeId)
+    navigate(`/log/${hikeId}`)
   }
 
   return (
