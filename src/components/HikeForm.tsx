@@ -2,12 +2,12 @@ import { useState, FormEvent } from 'react'
 
 // Type for a Hike object
 export interface Hike {
-  id?: number
-  trailName: string
-  distanceMiles: number
-  durationMinutes: number
-  userEmail: string
-  activityType: 'Walking' | 'Running'
+  hikeId?: number
+  hikeName: string
+  location: string
+  lengthMi: number
+  difficulty: number
+  imageUrl: string
 }
 
 // Props for HikeForm
@@ -16,33 +16,37 @@ interface HikeFormProps {
 }
 
 const HikeForm: React.FC<HikeFormProps> = ({ onHikeAdded }) => {
-  const [trailName, setTrailName] = useState('')
-  const [distance, setDistance] = useState('')
-  const [duration, setDuration] = useState('')
-  const [activityType, setActivityType] = useState<'Walking' | 'Running'>('Walking')
+   const [hikeName, setHikeName] = useState('')
+  const [location, setLocation] = useState('')
+  const [lengthMi, setLengthMi] = useState('')
+  const [difficulty, setDifficulty] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
+  // const [activityType, setActivityType] = useState<'Walking' | 'Running'>('Walking')
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
 
-    const newHike: Hike = {
-      trailName,
-      distanceMiles: parseFloat(distance),
-      durationMinutes: parseInt(duration),
-      userEmail: 'guest@tester.com',
-      activityType,
+    const newHike = {
+      hikeName,
+      location,
+      lengthMi: parseFloat(lengthMi),
+      difficulty: parseFloat(difficulty),
+      imageUrl
     }
 
-    fetch('http://localhost:8080/api/hikes/all', {
+    fetch('http://localhost:8080/api/hikes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newHike),
     })
       .then((res) => res.json())
-      .then((data) => {
+      .then((data: Hike) => {
         onHikeAdded(data)
-        setTrailName('')
-        setDistance('')
-        setDuration('')
+        setHikeName('')
+        setLocation('')
+        setLengthMi('')
+        setDifficulty('')
+        setImageUrl('')
       })
       .catch((err) => console.error('Error saving hike:', err))
   }
@@ -52,40 +56,54 @@ const HikeForm: React.FC<HikeFormProps> = ({ onHikeAdded }) => {
       onSubmit={handleSubmit}
       style={{ margin: '20px 0', padding: '15px', border: '1px solid #444', borderRadius: '8px' }}
     >
-      <h3>Log a New Activity</h3>
+      <h3>Create A New Hike</h3>
 
       <input
         type="text"
-        placeholder="Trail Name"
-        value={trailName}
-        onChange={(e) => setTrailName(e.target.value)}
+        placeholder="Hike Name"
+        value={hikeName}
+        onChange={(e) => setHikeName(e.target.value)}
         required
       />
 
       <input
+        type="text"
+        placeholder="Location"
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
+        required
+      />
+
+      <input
+
         type="number"
         step="0.1"
         placeholder="Miles"
-        value={distance}
-        onChange={(e) => setDistance(e.target.value)}
+        value={lengthMi}
+        onChange={(e) => setLengthMi(e.target.value)}
         required
       />
 
       <input
         type="number"
-        placeholder="Minutes"
-        value={duration}
-        onChange={(e) => setDuration(e.target.value)}
+        placeholder="Difficulty"
+        value={difficulty}
+        onChange={(e) => setDifficulty(e.target.value)}
         required
       />
-
-      <div style={{ margin: '10px 0' }}>
+<input
+        type="text"
+        placeholder="Image URL"
+        value={imageUrl}
+        onChange={(e) => setImageUrl(e.target.value)}
+      />
+      {/* <div style={{ margin: '10px 0' }}>
         <label>Activity: </label>
         <select value={activityType} onChange={(e) => setActivityType(e.target.value as 'Walking' | 'Running')}>
           <option value="Walking">Walking</option>
           <option value="Running">Running</option>
         </select>
-      </div>
+      </div> */}
 
       <button type="submit" style={{ backgroundColor: '#4CAF50', color: 'white', padding: '10px' }}>
         Save Activity
