@@ -74,3 +74,11 @@
   margin-top: 1rem;
   color: #b91c1c;
 }
+
+.top-nav {
+  display: flex;
+  gap: 12px;       
+  align-items: center;
+  padding: 1rem 0;   
+  flex-wrap: wrap;
+}
