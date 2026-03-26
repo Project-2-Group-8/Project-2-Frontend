@@ -9,6 +9,7 @@ import AdminPage from './pages/AdminPage'
 import EditHikePage from './pages/EditHikePage'
 import AddLogPage from './pages/AddLogPage'
 import LoginPage from './pages/LoginPage'
+import HikeLogsPage from './pages/HikeLogsPage'
 import AuthCallback from './pages/AuthCallback'
 import Leaderboard from './components/Leaderboard'
 import type { Hike } from './components/HikeForm'
@@ -115,6 +116,7 @@ export default function App() {
       <Route path="/log/:id" element={<AddLogPage />} />
       <Route path="/leaderboard" element={<Leaderboard />} /> {/* <-- Added this route */}
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/hike/:hikeId/logs" element={<HikeLogsPage />} />
     </Routes>
   )
 }

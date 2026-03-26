@@ -7,12 +7,12 @@ type Hike = {
   location: string
   lengthMi: number
   difficulty: string
-  imageUrl?: string 
+  imageUrl?: string
 }
 
 function HikeList() {
-   const [hikes, setHikes] = useState<Hike[]>([])
-   const navigate = useNavigate()
+  const [hikes, setHikes] = useState<Hike[]>([])
+  const navigate = useNavigate()
 
   useEffect(() => {
     // Fetch from Java Backend (Port 8080)
@@ -36,9 +36,30 @@ function HikeList() {
     navigate(`/log/${hikeId}`)
   }
 
+  const handleViewLogs = (hikeId: number) => {
+  navigate(`/hike/${hikeId}/logs`)
+}
+
+  const handleDelete = async (hikeId: number) => {
+    if (!window.confirm("Are you sure you want to delete this hike?")) return;
+
+    try {
+      const res = await fetch(`http://localhost:8080/api/hikes/${hikeId}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) throw new Error("Failed to delete");
+
+      // remove from UI
+      setHikes(prev => prev.filter(h => h.hikeId !== hikeId));
+    } catch (err) {
+      console.error("Delete failed:", err);
+    }
+  }
+
   return (
     <div className="App">
-      
+
       <div className="card">
         <h2>Recent Hikes</h2>
         {hikes.length > 0 ? (
@@ -48,7 +69,7 @@ function HikeList() {
                 <strong>{hike.hikeName}</strong> <br />
                 {hike.lengthMi} miles | {hike.location} <br />
                 <small>Difficulty: {hike.difficulty}</small>
-                 {hike.imageUrl && (
+                {hike.imageUrl && (
                   <img
                     src={hike.imageUrl}
                     alt={hike.hikeName}
@@ -69,6 +90,15 @@ function HikeList() {
 
                   <button onClick={() => handleAddLog(hike.hikeId)}>
                     Add Log
+                  </button>
+                  <button onClick={() => handleViewLogs(hike.hikeId)}>
+                    View Logs
+                  </button>
+                  <button
+                    onClick={() => handleDelete(hike.hikeId)}
+                    style={{ backgroundColor: 'red', color: 'white' }}
+                  >
+                    Delete
                   </button>
                 </div>
               </li>
