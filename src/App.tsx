@@ -10,6 +10,7 @@ import EditHikePage from './pages/EditHikePage'
 import AddLogPage from './pages/AddLogPage'
 import LoginPage from './pages/LoginPage'
 import AuthCallback from './pages/AuthCallback'
+import Leaderboard from './components/Leaderboard'
 import type { Hike } from './components/HikeForm'
 
 type BackendUser = {
@@ -24,7 +25,7 @@ function Dashboard() {
   const [backendUser, setBackendUser] = useState<BackendUser | null>(null)
   const [hikes, setHikes] = useState<Hike[]>([])
 
-async function handleLogout() {
+  async function handleLogout() {
     await supabase.auth.signOut()
     setEmail('')
     setBackendUser(null)
@@ -36,6 +37,7 @@ async function handleLogout() {
       .then(data => setHikes(data))
       .catch(err => console.error('Error fetching hikes:', err))
   }
+
   async function checkBackend(token: string) {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/me`, {
@@ -47,7 +49,6 @@ async function handleLogout() {
     }
   }
 
-  
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (data.session) {
@@ -70,20 +71,19 @@ async function handleLogout() {
     return () => subscription.unsubscribe()
   }, [])
 
-  
-  
-
   return (
     <div className="app-shell">
       <nav className="top-nav">
-        <Link to="/">Home</Link>
-        {backendUser && <Link to="/profile">Profile</Link>}
-        {backendUser?.role === 'admin' && <Link to="/admin">Admin</Link>}
-        {email
-          ? <button onClick={handleLogout}>Logout</button>
-          : <Link to="/login"><button>Login</button></Link>
-        }
-      </nav>
+  <Link to="/"><button>Home</button></Link>
+  <Link to="/leaderboard"><button>Leaderboard</button></Link>
+  
+  {backendUser && <Link to="/profile"><button>Profile</button></Link>}
+  
+  {email
+    ? <button onClick={handleLogout}>Logout</button>
+    : <Link to="/login"><button>Login</button></Link>
+  }
+</nav>
 
       <div className="dashboard-container">
         <header className="dashboard-header">
@@ -113,6 +113,7 @@ export default function App() {
       <Route path="/admin" element={<AdminPage backendUser={null} />} />
       <Route path="/edit/:id" element={<EditHikePage />} />
       <Route path="/log/:id" element={<AddLogPage />} />
+      <Route path="/leaderboard" element={<Leaderboard />} /> {/* <-- Added this route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
